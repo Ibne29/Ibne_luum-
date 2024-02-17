@@ -1,3 +1,33 @@
+<?php
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "prix_nobel";
+
+// Connexion à la base de données
+$mysqli = new mysqli($host, $user, $password, $database);
+
+// Vérification de la connexion
+if ($mysqli->connect_error) {
+    die("La connexion à la base de données a échoué : " . $mysqli->connect_error);
+}
+
+// Exécutez la requête SQL pour récupérer les données de la table prix_nobel
+$query = "SELECT * FROM prix_nobel";
+$resultPrixNobel = $mysqli->query($query);
+
+// Créez un tableau associatif pour stocker les données récupérées
+$data = array();
+
+while ($row = $resultPrixNobel->fetch_assoc()) {
+    $data[] = $row;
+}
+
+// Convertissez le tableau associatif en format JSON
+$jsonData = json_encode($data);
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -82,6 +112,19 @@
      <script>
         var ctx = document.getElementById('graphs').getContext('2d');
 
+    // utilisation des données 
+
+       var jsonData = <?php echo $jsonData; ?>;
+
+       console.log(jsonData);
+
+        var labels = jsonData.map(item => item.Nom_catégorie); //on souhaite que les labels soient la categorie 
+        var colors = labels.map(getRandomColor);
+
+
+
+
+
 // Fonction pour générer une couleur aléatoire
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
@@ -96,22 +139,21 @@ var labels = ['Label1', 'Label2', 'Label3']; // les noms des données récupere�
 var colors = labels.map(getRandomColor);
 
 var config = {
-    type: 'bar', // Type de graphe initial
-    data: {
-        labels: labels,
-        datasets: [{
-            label: 'Nom de la série de données',
-            data: [10, 20, 30], // les données récupérees à partir de la base de données 
-            backgroundColor: colors,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        // Configurations d'options, selon vos besoins
-    }
-};
-
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Nom de la série de données',
+                    data: jsonData.map(item => item.Année), // on affiche les années 
+                    backgroundColor: colors,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                // Configurations d'options
+            }
+        };
 var myChart = new Chart(ctx, config);
 
 // Fonction pour changer le type de graphe
