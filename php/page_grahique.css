@@ -1,0 +1,14 @@
+
+body{
+    display: flex;
+    justify-content: center;
+}
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+    border-radius: 5px solid red;
+    background-color: thistle;
+    height: 100vh;
+}
